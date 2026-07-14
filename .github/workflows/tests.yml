@@ -83,6 +83,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: reports/allure-report
+          # Each deploy REPLACES the branch history instead of adding to it,
+          # so gh-pages stays the size of one report forever. (Trends are
+          # unaffected — they live in the report's history/ folder, which is
+          # part of the deployed content, not in git history.)
+          force_orphan: true
 
       - name: Attach reports to this run as a download
         if: always()
