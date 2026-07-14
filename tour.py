@@ -25,6 +25,27 @@ PY = sys.executable
 
 LINE = "-" * 72
 
+# The 26 practice tests live in learn/ (the pristine, committed source).
+# The tour copies them into tour-tests/ - YOUR working copy, git-ignored,
+# where you can edit and break things freely. Delete a file there and the
+# tour restores it from learn/ next time; delete the whole folder for a
+# completely fresh start.
+LEARN = Path(__file__).parent / "learn"
+TOUR_TESTS = Path(__file__).parent / "tour-tests"
+
+
+def ensure_tour_tests():
+    """Create tour-tests/ from learn/, without touching files you already
+    have there (your edits are yours)."""
+    created = 0
+    TOUR_TESTS.mkdir(exist_ok=True)
+    for source in sorted(LEARN.glob("test_*.py")):
+        target = TOUR_TESTS / source.name
+        if not target.exists():
+            shutil.copy2(source, target)
+            created += 1
+    return created
+
 
 def say(text):
     """
@@ -79,7 +100,8 @@ def chapter_welcome():
 
         Your map of the kit:
 
-          tests/            one file per test case, heavily commented
+          learn/            the 26 practice tests (the pristine source)
+          tour-tests/       YOUR copy of them - edit and break freely
           pages/            "page objects" - one class per page of the site
           helpers/          user journeys like create_account()
           pytest.ini        settings applied to every run
@@ -87,7 +109,7 @@ def chapter_welcome():
           scaffold.py       create a test project for YOUR own app
           README.md         the written version of this tour
 
-        Where to start reading: tests/test_tc01_register_user.py - it
+        Where to start reading: learn/test_tc01_register_user.py - it
         walks through a full user registration one commented step at a
         time. But before reading anything, take Chapter 2 and WATCH a
         test run. It makes everything else click.
@@ -105,7 +127,7 @@ def chapter_watch():
 
         A browser window is about to open BY ITSELF and search the shop
         for a dress, like a very fast, very obedient intern. The test is
-        tests/test_tc09_search_product.py, slowed down (500 ms between
+        tour-tests/test_tc09_search_product.py, slowed down (500 ms between
         actions) so your eyes can follow.
 
         Watch for these moments:
@@ -119,16 +141,16 @@ def chapter_watch():
         The window closes on its own when the test finishes.
     """)
     pause("  [Enter] to launch the browser... ")
-    run([PY, "-m", "pytest", "tests/test_tc09_search_product.py",
+    run([PY, "-m", "pytest", "tour-tests/test_tc09_search_product.py",
          "--headed", "--slowmo", "500", "--reruns", "0"])
     say("""
         That '1 passed' at the bottom is the verdict. Now open
-        tests/test_tc09_search_product.py in your editor and read it -
-        you have already SEEN every line of it happen, so the code will
-        feel familiar. This watch-then-read order works for any test in
-        the kit:
+        tour-tests/test_tc09_search_product.py in your editor and read
+        it - you have already SEEN every line of it happen, so the code
+        will feel familiar. This watch-then-read order works for any
+        test in the kit:
 
-            python -m pytest tests/<any test file> --headed --slowmo 500
+            python -m pytest tour-tests/<any test file> --headed --slowmo 500
     """)
     pause()
 
@@ -216,7 +238,7 @@ def chapter_codegen():
 # Chapter 5 - write your first test
 # ---------------------------------------------------------------------------
 
-FIRST_TEST = Path("tests/test_my_first_test.py")
+FIRST_TEST = Path("tour-tests/test_my_first_test.py")
 
 FIRST_TEST_TEMPLATE = '''\
 """
@@ -225,7 +247,7 @@ My first test! Created by the learning tour (tour.py, Chapter 5).
 It already passes. Your mission: make it YOURS by finishing the TODOs.
 Run it (and watch it!) with:
 
-    python -m pytest tests/test_my_first_test.py --headed --slowmo 500
+    python -m pytest tour-tests/test_my_first_test.py --headed --slowmo 500
 """
 
 from playwright.sync_api import Page, expect
@@ -260,20 +282,21 @@ def chapter_first_test():
         CHAPTER 5 - WRITE YOUR FIRST TEST
 
         Time to switch from passenger to driver. The tour will create
-        tests/test_my_first_test.py - a working test with three TODOs
-        that grow it from "opens the page" into a real user journey.
+        tour-tests/test_my_first_test.py - a working test with three
+        TODOs that grow it from "opens the page" into a real user
+        journey.
     """)
     if FIRST_TEST.exists():
-        say("(tests/test_my_first_test.py already exists - keeping your "
-            "version, not overwriting it.)")
+        say("(tour-tests/test_my_first_test.py already exists - keeping "
+            "your version, not overwriting it.)")
     else:
         FIRST_TEST.write_text(FIRST_TEST_TEMPLATE, encoding="utf-8")
-        say("Created tests/test_my_first_test.py.")
+        say("Created tour-tests/test_my_first_test.py.")
     say("""
         The loop that all test-writing follows:
 
           1. Edit the file (do one TODO)
-          2. Watch it:  python -m pytest tests/test_my_first_test.py
+          2. Watch it:  python -m pytest tour-tests/test_my_first_test.py
                         --headed --slowmo 500
           3. Green? Next TODO. Red? Read the error - Playwright's
              failure messages tell you exactly what it looked for and
@@ -325,8 +348,8 @@ def chapter_reports():
     answer = input("  Run the two tests? [y/N] ").strip().lower()
     print()
     if answer == "y":
-        run([PY, "-m", "pytest", "tests/test_tc07_test_cases_page.py",
-             "tests/test_tc10_subscription_home.py"])
+        run([PY, "-m", "pytest", "tour-tests/test_tc07_test_cases_page.py",
+             "tour-tests/test_tc10_subscription_home.py"])
         say("""
             Done - now open reports/report.html in your browser
             (double-click it in your file explorer) and find the two
@@ -368,9 +391,23 @@ def check_setup():
 
 def main():
     check_setup()
+
+    # Give the learner their own copy of the practice tests to play in.
+    created = ensure_tour_tests()
+
+    # "python tour.py --create-tests" only materializes tour-tests/ and
+    # exits - used by CI and by anyone who just wants the files.
+    if "--create-tests" in sys.argv[1:]:
+        print(f"tour-tests/ ready ({created} file(s) copied from learn/).")
+        return
+
     print()
     print("  WELCOME TO THE AUTOMATION LEARNING TOUR")
     print("  (Playwright + Python, using automationexercise.com)")
+    if created:
+        print()
+        print(f"  (Set up your practice copy: copied {created} test file(s)")
+        print("   from learn/ into tour-tests/ - that's YOUR sandbox.)")
     while True:
         print()
         for number, (title, _) in enumerate(CHAPTERS, start=1):
@@ -396,9 +433,11 @@ def main():
             print("  (Type a chapter number, or q to quit.)")
     say("""
         Happy testing! Next steps whenever you're ready: read the tests
-        in numbered order, do the 'Ideas to try next' in the README, and
-        break things on purpose - a red test you understand teaches more
-        than a green one you don't.
+        in tour-tests/ in numbered order, do the 'Ideas to try next' in
+        the README, and break things on purpose - a red test you
+        understand teaches more than a green one you don't. (Broke one
+        beyond repair? Delete the file; the tour restores a fresh copy
+        from learn/ next time it starts.)
     """)
 
 

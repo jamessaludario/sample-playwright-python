@@ -4,14 +4,21 @@
 > Playwright + Python (pytest) edition of the
 > [qa-starter-kit](https://github.com/jamessaludario/qa-starter-kit) (TypeScript).
 
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-2ea44f?style=for-the-badge&logo=github)](https://github.com/jamessaludario/qa-starter-kit-python/generate)
+
+Click **Use this template** to get your own independent copy of the kit
+on GitHub — the original stays untouched, and your copy is 100% yours
+to edit.
+
 ---
 
 ## 🌱 New to QA automation? Start here
 
-Don't read anything yet — **do** the guided tour. It opens a real
-browser so you can watch a test drive a website in slow motion, lets
-you record your own script just by clicking around, and walks you into
-writing your first test:
+Don't read anything yet — **do** the guided tour. It sets up your own
+sandbox copy of the practice tests, opens a real browser so you can
+watch a test drive a website in slow motion, lets you record your own
+script just by clicking around, and walks you into writing your first
+test:
 
 ```bash
 pip install -r requirements.txt
@@ -37,9 +44,13 @@ A hybrid **learning playground** and **ready-made test suite scaffold**:
 
 **The kit provides:**
 - 🧭 **Interactive tour** (`python tour.py`) — watch, record, then write
-- 📚 **26 commented test cases** — a full suite to learn from
-- 🏗️ **Scaffolder + template** — a fresh test project for any web app in seconds
-- 🤖 **AI prompts + agent rules** — standardized prompts (scan → baseline → e2e → fix) and a `CLAUDE.md` convention file any agent can follow
+- 📚 **26 commented test cases** — pristine sources in [learn/](learn/),
+  your editable sandbox copy in `tour-tests/` (created by the tour,
+  git-ignored — break things freely, fresh copies on demand)
+- 🏗️ **Scaffolder + template** — a fresh test project for any web app in
+  seconds, with the framework pieces you want
+- 🤖 **AI prompts + agent rules** — standardized prompts (scan → baseline
+  → e2e → fix) and a `CLAUDE.md` convention file any agent can follow
 - 📊 **Reports built in** — one-file HTML report, Allure dashboards with
   trends and failure screenshots, automatic retries for flaky moments
 - 🚀 **CI included** — GitHub Actions runs the suite and publishes the live
@@ -63,44 +74,38 @@ A hybrid **learning playground** and **ready-made test suite scaffold**:
 
 ### 🏁 Learn (recommended first step)
 
+Click **Use this template** above (or clone this repo), then:
+
 ```bash
-git clone https://github.com/jamessaludario/qa-starter-kit-python.git
-cd qa-starter-kit-python
 pip install -r requirements.txt
 playwright install chromium
 
-python tour.py           # the guided tour
-pytest --headed --slowmo 500   # or just watch all 26 tests run
+python tour.py                  # the guided tour (creates tour-tests/)
+pytest --headed --slowmo 500    # then watch all 26 tests run
 ```
 
 (Python 3.10+ required. Only the Allure analytics report additionally
 needs Node.js — everything else works without it.)
 
-### 🚀 Start a test repo for YOUR web app
+### 🚀 Start a test suite for YOUR web app
 
-Three ways — pick what fits:
-
-**A. GitHub template (no cloning needed).** Click **"Use this
-template"** on
-[qa-test-template-python](https://github.com/jamessaludario/qa-test-template-python)
-→ you get a clean, independent test repo (no learning material).
-Then `cp .env.example .env`, fill in your app's URL, and go.
-
-**B. Scaffold from the kit.** If you have the kit cloned anyway:
+**A. Fresh project next to the kit:**
 
 ```bash
 python scaffold.py
 ```
 
-Two questions (project name, app URL) and you get a fresh, independent
-project next to the kit:
+It asks for a project name, your app's URL, and which framework pieces
+you want — **pages** (page objects), **helpers**, **constants**,
+**fixtures**, **utils**. Take all of them (recommended), a subset, or
+`none` for a bare pytest+Playwright setup; pieces that need each other
+are included together automatically. You get an independent project:
 
 ```
-../my-app-tests/     ← full structure, .env filled in, smoke test ready
+../my-app-tests/     ← chosen structure, .env filled in, smoke test ready
 ```
 
-**C. Into an existing repo.** Adding tests inside your app's own
-repository (e.g. an `e2e/` folder):
+**B. Into an existing repo** (e.g. an `e2e/` folder inside your app):
 
 ```bash
 python scaffold.py --name my-app --url https://... --dest path/to/repo/e2e --into-existing
@@ -108,14 +113,14 @@ python scaffold.py --name my-app --url https://... --dest path/to/repo/e2e --int
 
 Files you already have are never touched; only missing ones are added.
 
-Whichever way, then:
+**Then, either way:**
 
 ```bash
 cd ../my-app-tests
 pytest tests/test_smoke.py     # proves the toolchain end to end
 ```
 
-Grow the suite either way:
+Grow the suite:
 - **With an AI agent:** open the folder in your agent and feed it
   `prompts/00-quick-start.md`. The prompts walk it through scanning your
   app, generating baseline tests per page, building e2e journeys, and
@@ -131,7 +136,8 @@ Grow the suite either way:
 
 ```bash
 python tour.py                  # interactive guided tour
-pytest                          # run all 26 tests (headless)
+python tour.py --create-tests   # just (re)create tour-tests/ and exit
+pytest                          # run your copy of the 26 tests (headless)
 pytest --headed --slowmo 500    # watch the browser work (great for learning!)
 pytest -k "order"               # run a group of tests
 python run_tests.py             # run everything + open the Allure report
@@ -149,26 +155,27 @@ visible in the reports, so flakiness is never silently hidden.
 
 ## Folder structure
 
-The kit and every scaffolded project share the same layered layout:
-
 ```
-your-app-tests/
-├── tests/           ← WHAT to verify (assertions live here)
-├── helpers/         ← reusable user journeys (login, create-record, ...)
+qa-starter-kit-python/
+├── learn/           ← the 26 practice tests (pristine, commented sources)
+├── tour-tests/      ← YOUR copy of them (created by the tour, git-ignored)
 ├── pages/           ← page objects: ALL locators live here, one class per page
-├── fixtures/        ← pytest plumbing: browser setup, screenshots, report labels
+├── helpers/         ← reusable user journeys (login, add-to-cart, ...)
+├── fixtures/        ← pytest plumbing: ad blocker, screenshots, report labels
 ├── utils/           ← pure-Python tools (unique test data)
-├── constants.py     ← app URL (from .env) + shared test data
+├── constants.py     ← site URL + shared test data
 ├── conftest.py      ← thin loader that plugs the fixtures in
-├── prompts/         ← copy-paste prompts for your AI agent
-├── CLAUDE.md        ← conventions your AI agent follows
-├── run_tests.py     ← run + build the Allure report in one command
-└── .env             ← your app's URL (git-ignored)
+├── tour.py          ← the interactive learning tour
+├── scaffold.py      ← creates a test project for YOUR app
+├── template/        ← the generic skeleton the scaffolder copies
+├── prompts/         ← copy-paste prompts for AI agents
+└── run_tests.py     ← run + build the Allure report in one command
 ```
 
-The layering to remember: **tests** (what to verify) → **helpers**
-(the journey) → **pages** (where things are). When the app changes,
-you fix one locator in one page class — not every test.
+Scaffolded projects share the same layered layout (minus the learning
+parts). The layering to remember: **tests** (what to verify) →
+**helpers** (the journey) → **pages** (where things are). When the app
+changes, you fix one locator in one page class — not every test.
 
 ## How the AI workflow works
 
@@ -186,40 +193,41 @@ you fix one locator in one page class — not every test.
 ## The learn track: 26 real test cases
 
 Every file maps 1-to-1 to an official test case of the practice site and
-is commented for beginners. Read them in order, or jump by topic:
+is commented for beginners. The sources live in [learn/](learn/); the
+tour copies them to `tour-tests/` where you run and edit them.
 
 | # | File | What it tests |
 |---|------|---------------|
-| 1 | [test_tc01_register_user.py](tests/test_tc01_register_user.py) | Register a new user (full flow) |
-| 2 | [test_tc02_login_correct.py](tests/test_tc02_login_correct.py) | Login with correct credentials |
-| 3 | [test_tc03_login_incorrect.py](tests/test_tc03_login_incorrect.py) | Login with wrong credentials shows error |
-| 4 | [test_tc04_logout.py](tests/test_tc04_logout.py) | Logout returns to login page |
-| 5 | [test_tc05_register_existing_email.py](tests/test_tc05_register_existing_email.py) | Duplicate email is rejected |
-| 6 | [test_tc06_contact_us_form.py](tests/test_tc06_contact_us_form.py) | Contact form + file upload + browser dialog |
-| 7 | [test_tc07_test_cases_page.py](tests/test_tc07_test_cases_page.py) | Test Cases page opens |
-| 8 | [test_tc08_all_products_and_details.py](tests/test_tc08_all_products_and_details.py) | Product list + product detail page |
-| 9 | [test_tc09_search_product.py](tests/test_tc09_search_product.py) | Search products |
-| 10 | [test_tc10_subscription_home.py](tests/test_tc10_subscription_home.py) | Footer subscription (home page) |
-| 11 | [test_tc11_subscription_cart.py](tests/test_tc11_subscription_cart.py) | Footer subscription (cart page) |
-| 12 | [test_tc12_add_products_in_cart.py](tests/test_tc12_add_products_in_cart.py) | Add two products, verify prices/totals |
-| 13 | [test_tc13_product_quantity_in_cart.py](tests/test_tc13_product_quantity_in_cart.py) | Quantity 4 shows up in cart |
-| 14 | [test_tc14_order_register_while_checkout.py](tests/test_tc14_order_register_while_checkout.py) | Full order — register during checkout |
-| 15 | [test_tc15_order_register_before_checkout.py](tests/test_tc15_order_register_before_checkout.py) | Full order — register first |
-| 16 | [test_tc16_order_login_before_checkout.py](tests/test_tc16_order_login_before_checkout.py) | Full order — login first |
-| 17 | [test_tc17_remove_product_from_cart.py](tests/test_tc17_remove_product_from_cart.py) | Remove product from cart |
-| 18 | [test_tc18_view_category_products.py](tests/test_tc18_view_category_products.py) | Category sidebar (Women/Men) |
-| 19 | [test_tc19_view_brand_products.py](tests/test_tc19_view_brand_products.py) | Brand pages (Polo/H&M) |
-| 20 | [test_tc20_search_and_verify_cart_after_login.py](tests/test_tc20_search_and_verify_cart_after_login.py) | Cart survives logging in |
-| 21 | [test_tc21_add_review_on_product.py](tests/test_tc21_add_review_on_product.py) | Submit a product review |
-| 22 | [test_tc22_recommended_items.py](tests/test_tc22_recommended_items.py) | Add to cart from carousel |
-| 23 | [test_tc23_address_details_in_checkout.py](tests/test_tc23_address_details_in_checkout.py) | Checkout shows registered address |
-| 24 | [test_tc24_download_invoice.py](tests/test_tc24_download_invoice.py) | Download invoice after purchase |
-| 25 | [test_tc25_scroll_up_with_arrow.py](tests/test_tc25_scroll_up_with_arrow.py) | Scroll-up arrow button |
-| 26 | [test_tc26_scroll_up_without_arrow.py](tests/test_tc26_scroll_up_without_arrow.py) | Scroll up with JavaScript |
+| 1 | [test_tc01_register_user.py](learn/test_tc01_register_user.py) | Register a new user (full flow) |
+| 2 | [test_tc02_login_correct.py](learn/test_tc02_login_correct.py) | Login with correct credentials |
+| 3 | [test_tc03_login_incorrect.py](learn/test_tc03_login_incorrect.py) | Login with wrong credentials shows error |
+| 4 | [test_tc04_logout.py](learn/test_tc04_logout.py) | Logout returns to login page |
+| 5 | [test_tc05_register_existing_email.py](learn/test_tc05_register_existing_email.py) | Duplicate email is rejected |
+| 6 | [test_tc06_contact_us_form.py](learn/test_tc06_contact_us_form.py) | Contact form + file upload + browser dialog |
+| 7 | [test_tc07_test_cases_page.py](learn/test_tc07_test_cases_page.py) | Test Cases page opens |
+| 8 | [test_tc08_all_products_and_details.py](learn/test_tc08_all_products_and_details.py) | Product list + product detail page |
+| 9 | [test_tc09_search_product.py](learn/test_tc09_search_product.py) | Search products |
+| 10 | [test_tc10_subscription_home.py](learn/test_tc10_subscription_home.py) | Footer subscription (home page) |
+| 11 | [test_tc11_subscription_cart.py](learn/test_tc11_subscription_cart.py) | Footer subscription (cart page) |
+| 12 | [test_tc12_add_products_in_cart.py](learn/test_tc12_add_products_in_cart.py) | Add two products, verify prices/totals |
+| 13 | [test_tc13_product_quantity_in_cart.py](learn/test_tc13_product_quantity_in_cart.py) | Quantity 4 shows up in cart |
+| 14 | [test_tc14_order_register_while_checkout.py](learn/test_tc14_order_register_while_checkout.py) | Full order — register during checkout |
+| 15 | [test_tc15_order_register_before_checkout.py](learn/test_tc15_order_register_before_checkout.py) | Full order — register first |
+| 16 | [test_tc16_order_login_before_checkout.py](learn/test_tc16_order_login_before_checkout.py) | Full order — login first |
+| 17 | [test_tc17_remove_product_from_cart.py](learn/test_tc17_remove_product_from_cart.py) | Remove product from cart |
+| 18 | [test_tc18_view_category_products.py](learn/test_tc18_view_category_products.py) | Category sidebar (Women/Men) |
+| 19 | [test_tc19_view_brand_products.py](learn/test_tc19_view_brand_products.py) | Brand pages (Polo/H&M) |
+| 20 | [test_tc20_search_and_verify_cart_after_login.py](learn/test_tc20_search_and_verify_cart_after_login.py) | Cart survives logging in |
+| 21 | [test_tc21_add_review_on_product.py](learn/test_tc21_add_review_on_product.py) | Submit a product review |
+| 22 | [test_tc22_recommended_items.py](learn/test_tc22_recommended_items.py) | Add to cart from carousel |
+| 23 | [test_tc23_address_details_in_checkout.py](learn/test_tc23_address_details_in_checkout.py) | Checkout shows registered address |
+| 24 | [test_tc24_download_invoice.py](learn/test_tc24_download_invoice.py) | Download invoice after purchase |
+| 25 | [test_tc25_scroll_up_with_arrow.py](learn/test_tc25_scroll_up_with_arrow.py) | Scroll-up arrow button |
+| 26 | [test_tc26_scroll_up_without_arrow.py](learn/test_tc26_scroll_up_without_arrow.py) | Scroll up with JavaScript |
 
 Where to start reading:
-1. [test_tc01_register_user.py](tests/test_tc01_register_user.py) — a
-   full flow written out step by step
+1. [learn/test_tc01_register_user.py](learn/test_tc01_register_user.py) —
+   a full flow written out step by step
 2. [helpers/flows.py](helpers/flows.py) then
    [pages/base_page.py](pages/base_page.py) — how a helper like
    `create_account()` is built from page-object methods
@@ -296,7 +304,8 @@ workflow in `template/.github/workflows/tests.yml`.
 
 ## Ideas to try next
 
-1. Change the search word in test case 9 from `"dress"` to `"top"`.
+1. In `tour-tests/`, change the search word in test case 9 from
+   `"dress"` to `"top"`.
 2. In test case 13, try a different quantity.
 3. Add a new test: what happens when you search for something that
    doesn't exist (e.g. `"xyz123"`)?

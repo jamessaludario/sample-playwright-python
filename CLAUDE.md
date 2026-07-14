@@ -4,12 +4,16 @@ This repo is a LEARNING KIT and TEMPLATE SOURCE, not an ordinary test
 suite. It has two halves:
 
 1. **The learn track** — 26 heavily-commented Playwright + pytest tests
-   against https://automationexercise.com (tests/), an interactive tour
-   (tour.py), and a layered framework (pages/, helpers/, fixtures/,
-   constants.py, utils/).
+   against https://automationexercise.com (sources in learn/; the tour
+   copies them to the git-ignored tour-tests/, the learner's sandbox
+   and the pytest testpath), an interactive tour (tour.py), and a
+   layered framework (pages/, helpers/, fixtures/, constants.py,
+   utils/).
 2. **The scaffold** — template/ (a generic project skeleton), prompts/
    (AI prompts), and scaffold.py which copies both into a fresh
-   project for the user's own app.
+   project for the user's own app (components selectable via
+   --include). The repo is also a GitHub template ("Use this
+   template"), so users can copy it without cloning.
 
 ## Conventions when editing here
 
@@ -29,14 +33,13 @@ If you improve the framework (pages/base_page.py, fixtures/, run_tests.py,
 pytest.ini, requirements.txt), mirror the improvement into template/
 (its generic, app-agnostic version) — and vice versa.
 
-After changing template/ or prompts/, also republish the GitHub
-template repo ("Use this template" flow):
-`python publish_template.py` (pushes to qa-test-template-python).
 
 ## Testing changes
 
-- Quick check: `python -m pytest tests/test_tc07_test_cases_page.py --reruns 0`
+- Quick check: `python tour.py --create-tests` then
+  `python -m pytest tour-tests/test_tc07_test_cases_page.py --reruns 0`
 - Scaffold check: `python scaffold.py --name tmp --url https://example.com --dest <temp dir>`
-  then run its smoke test and delete the folder.
+  then run its smoke test and delete the folder. Also spot-check a
+  partial layout, e.g. `--include none` and `--include pages`.
 - The tour must keep working: `echo 1 | python tour.py` should print
   chapter 1 without errors.

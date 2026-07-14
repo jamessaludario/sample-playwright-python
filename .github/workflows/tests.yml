@@ -48,6 +48,11 @@ jobs:
       - name: Install the browser
         run: playwright install --with-deps chromium
 
+      # The runnable suite (tour-tests/) is created from the sources in
+      # learn/ - the same step the tour does for learners.
+      - name: Create the practice test suite
+        run: python tour.py --create-tests
+
       # continue-on-error: a failed test run is exactly when we want the
       # report, so don't stop here. The last step restores the real
       # pass/fail status once the report is safely published.
