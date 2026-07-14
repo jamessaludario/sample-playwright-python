@@ -28,5 +28,5 @@ def test_remove_product_from_cart(page: Page):
     page.locator(".cart_quantity_delete").click()
 
     # Step 4: the row disappears and the cart says it is empty
-    expect(rows).to_have_count(2)
+    expect(rows).to_have_count(0)
     expect(page.get_by_text("Cart is empty!")).to_be_visible()
