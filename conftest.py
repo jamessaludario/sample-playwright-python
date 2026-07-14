@@ -107,6 +107,42 @@ def unique_email():
 
 
 # ---------------------------------------------------------------------------
+# Feature areas (powers Allure's "Behaviors" view)
+# ---------------------------------------------------------------------------
+# Each test is tagged with the part of the website it covers. Allure then
+# groups results per area on its Behaviors tab, so you can see at a glance
+# WHERE failures cluster ("3 of 4 Cart tests failed") instead of just how
+# many failed overall — in QA terms, the defect density per feature area.
+#
+# The usual way is an @allure.feature("Cart") decorator on every test.
+# Keeping ONE map here does the same thing without editing 26 files, and
+# doubles as a table of contents for the suite.
+
+FEATURE_AREAS = {
+    "Signup & Login":       ["tc01", "tc02", "tc03", "tc04", "tc05"],
+    "Contact & Info Pages": ["tc06", "tc07"],
+    "Products & Search":    ["tc08", "tc09", "tc18", "tc19", "tc21", "tc22"],
+    "Subscription":         ["tc10", "tc11"],
+    "Cart":                 ["tc12", "tc13", "tc17", "tc20"],
+    "Checkout & Orders":    ["tc14", "tc15", "tc16", "tc23", "tc24"],
+    "Home Page UI":         ["tc25", "tc26"],
+}
+
+
+def pytest_collection_modifyitems(items):
+    """
+    pytest calls this once, after it has found ("collected") all the tests.
+    We look up each test's tcXX number in the map above and attach the
+    matching Allure feature label to it.
+    """
+    for item in items:
+        for feature, test_cases in FEATURE_AREAS.items():
+            if any(tc in item.nodeid for tc in test_cases):
+                item.add_marker(allure.feature(feature))
+                break
+
+
+# ---------------------------------------------------------------------------
 # Screenshot on failure (attached to the Allure report)
 # ---------------------------------------------------------------------------
 # When a test fails, a picture of what the page looked like at that moment
