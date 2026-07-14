@@ -18,6 +18,7 @@ automatically by the pytest-playwright plugin — we don't create it here.
 
 import time
 
+import allure
 import pytest
 import pytest_html.html_report
 from playwright.sync_api import Page, expect
@@ -103,6 +104,51 @@ def unique_email():
     seconds, so the number is different every millisecond.
     """
     return f"student.{int(time.time() * 1000)}@example.com"
+
+
+# ---------------------------------------------------------------------------
+# Screenshot on failure (attached to the Allure report)
+# ---------------------------------------------------------------------------
+# When a test fails, a picture of what the page looked like at that moment
+# is worth a thousand stack traces. These two pieces work together:
+#
+#   1. pytest normally keeps each test's result to itself. This hook copies
+#      the result onto the test item, so our fixture below can read it.
+#   2. The autouse fixture runs after every test; if the test failed, it
+#      takes one screenshot and attaches it to that test in Allure
+#      (open a failed test in the report to see it).
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    # report.when is "setup", "call" (the test itself) or "teardown".
+    # We stash each phase's result, e.g. item.rep_call for the test body.
+    setattr(item, "rep_" + report.when, report)
+
+
+@pytest.fixture(autouse=True)
+def screenshot_on_failure(page: Page, request):
+    # Everything before `yield` runs BEFORE the test, everything after
+    # runs AFTER it — so this line means "let the test run first".
+    yield
+
+    report = getattr(request.node, "rep_call", None)
+    if report is None or not report.failed:
+        return  # test passed (or never ran) -> no screenshot needed
+
+    # The browser can be in a bad state after some failures (e.g. crashed
+    # or already closed), and a screenshot failure should never hide the
+    # REAL test failure — so we try, and quietly give up if we can't.
+    try:
+        allure.attach(
+            page.screenshot(full_page=True),
+            name="screenshot-at-failure",
+            attachment_type=allure.attachment_type.PNG,
+        )
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
