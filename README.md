@@ -76,7 +76,17 @@ pytest --headed --slowmo 500   # or just watch all 26 tests run
 (Python 3.10+ required. Only the Allure analytics report additionally
 needs Node.js — everything else works without it.)
 
-### 🚀 Scaffold tests for YOUR web app
+### 🚀 Start a test repo for YOUR web app
+
+Three ways — pick what fits:
+
+**A. GitHub template (no cloning needed).** Click **"Use this
+template"** on
+[qa-test-template-python](https://github.com/jamessaludario/qa-test-template-python)
+→ you get a clean, independent test repo (no learning material).
+Then `cp .env.example .env`, fill in your app's URL, and go.
+
+**B. Scaffold from the kit.** If you have the kit cloned anyway:
 
 ```bash
 python scaffold.py
@@ -89,7 +99,16 @@ project next to the kit:
 ../my-app-tests/     ← full structure, .env filled in, smoke test ready
 ```
 
-Then:
+**C. Into an existing repo.** Adding tests inside your app's own
+repository (e.g. an `e2e/` folder):
+
+```bash
+python scaffold.py --name my-app --url https://... --dest path/to/repo/e2e --into-existing
+```
+
+Files you already have are never touched; only missing ones are added.
+
+Whichever way, then:
 
 ```bash
 cd ../my-app-tests

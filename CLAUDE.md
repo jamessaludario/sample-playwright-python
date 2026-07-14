@@ -29,6 +29,10 @@ If you improve the framework (pages/base_page.py, fixtures/, run_tests.py,
 pytest.ini, requirements.txt), mirror the improvement into template/
 (its generic, app-agnostic version) — and vice versa.
 
+After changing template/ or prompts/, also republish the GitHub
+template repo ("Use this template" flow):
+`python publish_template.py` (pushes to qa-test-template-python).
+
 ## Testing changes
 
 - Quick check: `python -m pytest tests/test_tc07_test_cases_page.py --reruns 0`

@@ -9,11 +9,14 @@ scaffolded from the
 ```bash
 pip install -r requirements.txt
 playwright install chromium
+```
 
-# your app's address lives in .env (git-ignored)
-# it was created by the scaffolder — check the values:
-#   PROJECT_NAME=...
-#   BASE_URL=...
+Your app's address lives in `.env` (git-ignored). If you used
+`scaffold.py`, it was created for you — check the values. If you
+created this repo from the GitHub template, make it now:
+
+```bash
+cp .env.example .env     # then edit PROJECT_NAME and BASE_URL
 ```
 
 Prove the toolchain works end to end:
