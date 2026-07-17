@@ -332,11 +332,15 @@ system.)
 <summary><strong>Click to see how CI reporting works</strong></summary>
 
 [.github/workflows/tests.yml](.github/workflows/tests.yml) runs the
-suite on every push to `main` and delivers the reports two ways:
+suite on every push to `main` and delivers the reports (and docs) three
+ways:
 
 - **Live Allure report on GitHub Pages** — every run publishes to
   <https://jamessaludario.github.io/qa-starter-kit-python/>, history
   carried between runs so the trend graphs grow in CI too.
+- **Live docs site** — the same deploy also publishes the learning guide
+  to <https://jamessaludario.github.io/qa-starter-kit-python/docs/>,
+  rebuilt fresh from `docs/` by `docs/build_site.py` on every run.
 - **Downloadable artifact** — each run attaches `test-reports` (the
   self-contained `report.html` plus the Allure folder).
 
@@ -433,8 +437,10 @@ it's a single self-contained file, no server needed.
 - **[docs/qa-automation-guide.html](docs/qa-automation-guide.html)** — a
   from-zero written guide covering every concept the tour teaches
   hands-on: what Playwright is, locators, assertions, fixtures, markers,
-  and reports. Open it directly in a browser, or run
-  `python docs/build_site.py` for a small browsable multi-page version
-  (opens automatically once built).
+  and reports. Open it directly in a browser, run
+  `python docs/build_site.py` for a browsable multi-page version (opens
+  automatically once built), or read it live at
+  <https://jamessaludario.github.io/qa-starter-kit-python/docs/>
+  (published by CI on every push to `main`).
 - [Playwright for Python docs](https://playwright.dev/python/docs/intro)
 - [pytest documentation](https://docs.pytest.org/)

@@ -6,7 +6,13 @@
 #      History is carried between runs (same trick as run_tests.py),
 #      so the trend graphs build up one data point per CI run.
 #
-#   2. Both reports are also attached to the run as a downloadable
+#   2. The learning docs site (built from docs/ by docs/build_site.py)
+#      is published alongside the report, under /docs/:
+#        https://jamessaludario.github.io/qa-starter-kit-python/docs/
+#      Both are assembled into one folder and deployed in a single
+#      atomic push, so neither can wipe out the other.
+#
+#   3. Both reports are also attached to the run as a downloadable
 #      artifact (Actions tab -> the run -> "test-reports").
 #      report.html is self-contained and opens anywhere; the Allure
 #      folder needs "allure open" locally, so use the Pages URL instead.
@@ -83,13 +89,28 @@ jobs:
           allure generate reports/allure-results -o reports/allure-report --clean \
             --report-name "AutomationExercise Test Report"
 
-      - name: Publish the report to GitHub Pages
+      # The docs site is plain static HTML - the build is a stdlib-only
+      # Python script, no extra installs needed. --no-open skips the
+      # "open in a browser" convenience, which has no meaning in CI.
+      - name: Build the docs site
+        run: python docs/build_site.py --no-open
+
+      # gh-pages is deployed with force_orphan (the whole branch is
+      # replaced every run), so everything that should stay live must go
+      # out in ONE deploy: report at the root URL, docs under /docs/.
+      - name: Assemble the Pages site (report + docs)
+        run: |
+          mkdir pages-root
+          cp -r reports/allure-report/. pages-root/
+          cp -r docs/site pages-root/docs
+
+      - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: reports/allure-report
+          publish_dir: pages-root
           # Each deploy REPLACES the branch history instead of adding to it,
-          # so gh-pages stays the size of one report forever. (Trends are
+          # so gh-pages stays the size of one deploy forever. (Trends are
           # unaffected — they live in the report's history/ folder, which is
           # part of the deployed content, not in git history.)
           force_orphan: true

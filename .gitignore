@@ -13,6 +13,10 @@ test-results/
 # Generated HTML test reports
 reports/
 
+# The built docs site - generated from docs/qa-automation-guide.html by
+# docs/build_site.py (CI rebuilds it fresh on every deploy)
+docs/site/
+
 # Your working copy of the practice tests, created from learn/ by the
 # tour (python tour.py). Edit and break these freely.
 tour-tests/

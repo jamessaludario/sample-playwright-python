@@ -1,0 +1,5 @@
+# Extra packages for the DESKTOP APP track (desktop/), kept separate from
+# requirements.txt because pywinauto only works on Windows - the web track
+# (learn/, tour-tests/) stays runnable on any OS without it.
+# Install with:  pip install -r requirements-desktop.txt
+pywinauto
