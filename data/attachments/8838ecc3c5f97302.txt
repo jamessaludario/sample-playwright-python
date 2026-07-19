@@ -1,0 +1,2 @@
+Product 1: price=Rs. 500, total=Rs. 500
+Product 2: price=Rs. 400, total=Rs. 400
